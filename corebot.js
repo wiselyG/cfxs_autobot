@@ -55,9 +55,15 @@ const startTask = async ()=>{
       break;
     }
     console.log("--1");
-    const nextNonce=await cfxsUtil.getNonce();
-    console.log("--2");
-    const txHash =await cfxsUtil.mint(nextNonce);
+    let txHash;
+    try {
+      const nextNonce=await cfxsUtil.getNonce();
+      txHash =await cfxsUtil.mint(nextNonce);
+    } catch (error) {
+      console.log("mint failed");
+      index++;
+      continue;
+    }
     console.log("Hash:",txHash);
     let receipt;
     do{
