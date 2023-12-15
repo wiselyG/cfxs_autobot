@@ -54,7 +54,6 @@ const startTask = async ()=>{
       console.log("balance is less than 2 CFX,balance:",new Drip(corebalance).toCFX());
       break;
     }
-    console.log("--1");
     let txHash;
     try {
       const nextNonce=await cfxsUtil.getNonce();
