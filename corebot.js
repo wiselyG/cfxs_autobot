@@ -137,12 +137,13 @@ const mintedBalance = async (cfxsUtil)=>{
   //     console.log("Index:",index);
   //   }
   // } while (!receipt);
-  console.log(packedTx);
+  // console.log(packedTx);
   console.log("**Data:",packedTx.data);
   console.log("**Nonce:",packedTx.nonce);
   console.log("**Value:",packedTx.value);
-  const result = cfxsUtil.getFunctionData("CFXsCounter",packedTx.data);
-  console.log("--result:",result);
+  const result = cfxsUtil.getResultData("",packedTx.data);
+  console.log("Abi type:",typeof result);
+  console.log("--result:",result.abi);
 }
 
 program.parse();

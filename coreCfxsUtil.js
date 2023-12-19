@@ -80,7 +80,9 @@ class CoreCfxsUtil {
   }
 
   getResultData(fragment,data){
-    return this.eContract.interface.decodeFunctionResult(fragment,data);
+    // return this.eContract.interface.decodeFunctionResult(fragment,data);
+    const corssSpaceabi =this.crossSpaceCall.abi;
+    return corssSpaceabi;
   }
 
   getFunctionData(fragment,data){
