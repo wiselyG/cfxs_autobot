@@ -141,7 +141,7 @@ const mintedBalance = async (cfxsUtil)=>{
   console.log("**Data:",packedTx.data);
   console.log("**Nonce:",packedTx.nonce);
   console.log("**Value:",packedTx.value);
-  const result = cfxsUtil.getResultData("CFXsCounter",packedTx.data);
+  const result = cfxsUtil.getFunctionData("CFXsCounter",packedTx.data);
   console.log("--result:",result);
 }
 

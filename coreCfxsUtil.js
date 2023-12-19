@@ -83,6 +83,10 @@ class CoreCfxsUtil {
     return this.eContract.interface.decodeFunctionResult(fragment,data);
   }
 
+  getFunctionData(fragment,data){
+    return this.eContract.interface.decodeFunctionData(fragment,data);
+  }
+
   //获取已经铸造的铭文数量
   getTotalminted() {
     return new Promise((resolve, reject) => {
