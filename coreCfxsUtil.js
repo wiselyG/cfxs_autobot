@@ -79,6 +79,10 @@ class CoreCfxsUtil {
     });
   }
 
+  getResultData(fragment,data){
+    return this.eContract.interface.decodeFunctionResult(fragment,data);
+  }
+
   //获取已经铸造的铭文数量
   getTotalminted() {
     return new Promise((resolve, reject) => {

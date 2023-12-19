@@ -55,8 +55,9 @@ const startTask = async ()=>{
       break;
     }
     let txHash;
+    let nextNonce;
     try {
-      const nextNonce=await cfxsUtil.getNonce();
+      nextNonce=await cfxsUtil.getNonce();
       txHash =await cfxsUtil.mint(nextNonce);
     } catch (error) {
       console.log("mint failed");
@@ -140,7 +141,8 @@ const mintedBalance = async (cfxsUtil)=>{
   console.log("**Data:",packedTx.data);
   console.log("**Nonce:",packedTx.nonce);
   console.log("**Value:",packedTx.value);
-
+  const result = cfxsUtil.getResultData("CFXsCounter",packedTx.data);
+  console.log("--result:",result);
 }
 
 program.parse();
