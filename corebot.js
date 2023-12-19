@@ -109,7 +109,7 @@ program
 });
 
 program
-.command("mintcount")
+.command("balance")
 .argument('<number>',"which wallet")
 .action((args)=>{
   if(args == 1){
@@ -121,29 +121,12 @@ program
 });
 
 const mintedBalance = async (cfxsUtil)=>{
-  const packedTx = await cfxsUtil.getWalletBalance();
-  // console.log("Hash:",hash);
-  // let receipt;
-  // let index=0;
-  // do {
-  //   try {
-  //     receipt = await cfxsUtil.getReceipt(hash);
-  //   } catch (error) {
-  //     console.log("get Receipt error:");
-  //     console.error(error.stack);
-  //   }
-  //   index++;
-  //   if(index % 10==0){
-  //     console.log("Index:",index);
-  //   }
-  // } while (!receipt);
-  // console.log(packedTx);
-  console.log("**Data:",packedTx.data);
-  console.log("**Nonce:",packedTx.nonce);
-  console.log("**Value:",packedTx.value);
-  const result = cfxsUtil.getResultData("",packedTx.data);
-  console.log("Abi type:",typeof result);
-  console.log("--result:",result.abi);
+  const packedTx = await cfxsUtil.getTotalminted();
+  console.log("Total minted:",packedTx);
+  const address = await cfxsUtil.getEvmaddress();
+  const cfxs_balance = await cfxsUtil.getWalletBalance(address);
+  console.log("address:",address);
+  console.log("Balance Number:",cfxsUtil.convertToNumber(cfxs_balance));
 }
 
 program.parse();
