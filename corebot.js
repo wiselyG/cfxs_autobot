@@ -91,11 +91,13 @@ const startTask = async ()=>{
 program
 .command("address")
 .argument('<number>',"which wallet")
-.action((index)=>{
+.argument('<number>',"set gasPrice")
+.action((index,gasprice)=>{
+  console.log("I:",index,"gasP:",gasprice);
   if(index == 1){
-    cfxsUtil= new CoreCfxsUtil(pKey1);
+    cfxsUtil= new CoreCfxsUtil(pKey1,gasprice);
   }else{
-    cfxsUtil= new CoreCfxsUtil(pKey2);
+    cfxsUtil= new CoreCfxsUtil(pKey2,gasprice);
   }
   cfxsUtil.getEvmaddress()
   .then(result=>{
@@ -105,27 +107,40 @@ program
   
 });
 
-const showEvm = async ()=>{
-  if(cfxsUtil){
-    const evmAddress= await cfxsUtil.getEvmaddress();
-    console.log("evm:",evmAddress);
-    const corebalance= await cfxsUtil.getCoreBalance();
-    console.log(corebalance," -",corebalance.toCFX());
-    const nextNonce= await cfxsUtil.getNonce();
-    console.log("Nonce:",nextNonce,"typeof:",typeof nextNonce);
-    const hash= await cfxsUtil.mint(nextNonce);
-    console.log("Tx hash:",hash);
-    // const txData = await hash.mined();
-    // console.log("Tx info:",txData);
-    // const txReceipt = await hash.executed();
-    let receipt;
-    do{
-      receipt = await cfxsUtil.getReceipt(hash);
-    }while(!receipt);
-    console.log("mint result:",receipt);
-    const balance = await cfxsUtil.getCoreBalance();
-    console.log("balance:",balance.toCFX());
+program
+.command("mintcount")
+.argument('<number>',"which wallet")
+.action((args)=>{
+  if(args == 1){
+    cfxsUtil= new CoreCfxsUtil(pKey1);
+  }else{
+    cfxsUtil= new CoreCfxsUtil(pKey2);
   }
+  mintedBalance(cfxsUtil);
+});
+
+const mintedBalance = async (cfxsUtil)=>{
+  const packedTx = await cfxsUtil.getWalletBalance();
+  // console.log("Hash:",hash);
+  // let receipt;
+  // let index=0;
+  // do {
+  //   try {
+  //     receipt = await cfxsUtil.getReceipt(hash);
+  //   } catch (error) {
+  //     console.log("get Receipt error:");
+  //     console.error(error.stack);
+  //   }
+  //   index++;
+  //   if(index % 10==0){
+  //     console.log("Index:",index);
+  //   }
+  // } while (!receipt);
+  console.log(packedTx);
+  console.log("**Data:",packedTx.data);
+  console.log("**Nonce:",packedTx.nonce);
+  console.log("**Value:",packedTx.value);
+
 }
 
 program.parse();

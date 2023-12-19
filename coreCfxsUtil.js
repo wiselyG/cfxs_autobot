@@ -1,5 +1,7 @@
 const { Conflux, Drip, address } = require('js-conflux-sdk');
+const { ethers } = require("ethers");
 const CORE_URL = process.env.CORE_URL;
+const ESPACE_URL = process.env.ESPACE_URL;
 const GASPRICE = process.env.gasprice || 90;
 const GASLimit = process.env.gasLimit || 1770000;
 const cfxs_contract = '0xc6e865c213c89ca42a622c5572d19f00d84d7a16';
@@ -8,16 +10,24 @@ const ONECFX = 1000000000000000000n;
 const BLIMIT = 2n;
 
 class CoreCfxsUtil {
-  constructor(pKey, gasprice) {
-    this.conflux = new Conflux({
-      url: CORE_URL,
-      networkId: 1029,
-      defaultGasPrice: Drip.fromGDrip(GASPRICE)
-    });
-    this.crossSpaceCall = this.conflux.InternalContract('CrossSpaceCall');
-    const account = this.conflux.wallet.addPrivateKey('0x' + pKey);
-    this.account = account;
-    this.gasprice = gasprice;
+  constructor(pKey, gasprice = 120) {
+    try {
+      this.conflux = new Conflux({
+        url: CORE_URL,
+        networkId: 1029,
+        defaultGasPrice: Drip.fromGDrip(GASPRICE)
+      });
+      this.crossSpaceCall = this.conflux.InternalContract('CrossSpaceCall');
+      const account = this.conflux.wallet.addPrivateKey('0x' + pKey);
+      this.account = account;
+      this.gasprice = gasprice;
+      const provider = new ethers.providers.JsonRpcProvider(ESPACE_URL);
+      const eContract = new ethers.Contract(cfxs_contract, cfxsAbi, provider);
+      this.eContract = eContract;
+    } catch (error) {
+      console.error("init coreCfxsUtil failed.");
+      throw error;
+    }
   }
 
   async getNonce() {
@@ -43,6 +53,36 @@ class CoreCfxsUtil {
         .catch(err => {
           reject(err);
         })
+    });
+  }
+
+  //获取与core关联地址的cfxs数量
+  getWalletBalance() {
+    return new Promise((resolve, reject) => {
+      const params = {
+        from: this.account.address,
+        gasPrice: Drip.fromGDrip(this.gasprice)
+      }
+      const runone = async (params) => {
+        const packedTx = await this.crossSpaceCall.staticCallEVM(cfxs_contract, this.eContract.interface.encodeFunctionData("CFXsCounter"))
+          .sendTransaction(params).get();
+        return packedTx;
+      }
+      runone(params)
+        .then(result => {
+          resolve(result);
+        })
+        .catch(err => {
+          reject(err);
+        })
+
+    });
+  }
+
+  //获取已经铸造的铭文数量
+  getTotalminted() {
+    return new Promise((resolve, reject) => {
+
     });
   }
 
